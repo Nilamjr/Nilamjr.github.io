@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restarting After 2.5 Years: Setting Up My First Custom Shopify Theme From Scratch — Nilam Rakholiya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="../index.html" class="nav-brand">nilam<span>.dev</span></a>
+    <ul class="nav-links">
+      <li><a href="../index.html#about">About</a></li>
+      <li><a href="../index.html#experience">Experience</a></li>
+      <li><a href="../index.html#projects">Projects</a></li>
+      <li><a href="index.html">Blog</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+  </div>
+</nav>
+
+<header class="post-header">
+  <div class="wrap">
+    <a class="back-link" href="index.html">← Back to blog</a>
+    <h1>Restarting After 2.5 Years: Setting Up My First Custom Shopify Theme From Scratch</h1>
+    <p class="post-meta">Day 1–2 · Shopify · CLI · Learning in public</p>
+  </div>
+</header>
+
+<article class="post-body wrap">
+<p><em>A learning log from my first two days back in hands-on development — CLI setup, a live local theme, and actually understanding what was happening underneath it.</em></p>
+<h2 id="why-im-writing-this">Why I’m writing this</h2>
+<p>I stepped away from hands-on development for two and a half years. Coming back, I didn’t want a portfolio built from tutorials I’d copy-pasted my way through — I wanted something that actually proved I could think through a real workflow, mistakes included.</p>
+<p>So this is that: an honest log of the first two days of building a custom Shopify theme completely from scratch, using the Shopify CLI instead of a pre-built theme. Not just the commands I ran, but what I misunderstood along the way, and what I went back and actually learned once the commands worked.</p>
+<p>I’ve already worked professionally with Shopify — themes, components, the storefront side. What was new here was doing it <em>without</em> a starting theme, and doing it through the command line instead of the admin’s drag-and-drop editor.</p>
+<hr />
+<h2 id="day-1-getting-the-cli-running">Day 1 — Getting the CLI running</h2>
+<p>My starting point was a fresh dev store, sitting on Shopify’s default theme.</p>
+<p><img src="../assets/images/01-online-store-admin.png" alt="Shopify Online Store admin showing the default Horizon theme" /> <em>The store as it existed before any of this — default Horizon theme, freshly created.</em></p>
+<h3 id="installing-the-cli">Installing the CLI</h3>
+<p>The first step was installing the Shopify CLI itself:</p>
+<pre><code>npm install -g @shopify/cli @shopify/theme</code></pre>
+<p><img src="../assets/images/02-cli-install-terminal.png" alt="Terminal output showing npm install with deprecation warnings" /> <em>My first reaction to this was “did something break?” It hadn’t.</em></p>
+<p>This is the part I’d tell past-me not to panic about. Every line here is a warning, not an error — mostly npm flagging outdated <em>sub-dependencies</em> other packages rely on internally. None of it touches Shopify or blocks the install. The one line worth actually reading was the <code>@shopify/theme</code> deprecation notice: that package is now bundled directly into <code>@shopify/cli</code>, so I technically didn’t need to install it separately — harmless, just redundant.</p>
+<h3 id="authenticating">Authenticating</h3>
+<p>Next was linking the CLI to my Shopify Partner account:</p>
+<pre><code>shopify auth login</code></pre>
+<p><img src="../assets/images/03-cli-version-and-login.png" alt="Terminal showing shopify version output and successful login" /> <em><code>shopify version</code> confirmed the install worked. <code>auth login</code> confirmed I was connected.</em></p>
+<p>This uses something called the <strong>OAuth device code flow</strong> — the same pattern a smart TV uses when it shows you a short code and asks you to enter it on a separate device. The terminal generated a code, opened a browser tab, and once I approved it there, my terminal received a private token proving it was allowed to act on my account going forward.</p>
+<p>One small detour here: I had an old browser tab open from a previous attempt, still asking for a verification code.</p>
+<p><img src="../assets/images/04-stale-login-code-page.png" alt="Shopify login page showing an incorrect code error" /> <em>This looked alarming until I realized my terminal had already logged in successfully — this tab was just stale.</em></p>
+<p>Worth remembering: once a login succeeds in the terminal, any lingering browser tab from that same flow is irrelevant. Codes expire, and the terminal is the actual source of truth for whether you’re authenticated.</p>
+<h3 id="scaffolding-a-blank-theme">Scaffolding a blank theme</h3>
+<p>With the CLI authenticated, I generated a theme:</p>
+<pre><code>shopify theme init my-custom-theme</code></pre>
+<p><img src="../assets/images/05-theme-init-llm-prompt.png" alt="Terminal prompt asking which LLM instruction file to include" /> <em>A prompt I hadn’t expected — the CLI offered to generate an AI-assistant instruction file alongside the theme.</em></p>
+<p>This pulls Shopify’s official <strong>Skeleton theme</strong> — a deliberately minimal starting point with the required folder structure but no design baked in. Importantly: <em>nothing about this step touches the actual store.</em> It’s just files landing on my machine. I could have deleted the folder right after and the store would be completely unaffected.</p>
+<p><img src="../assets/images/06-theme-folder-created.png" alt="Directory listing showing the my-custom-theme folder created" /> <em>Confirmation the theme folder existed locally.</em></p>
+<p>Moving into the folder and listing its contents showed the real structure:</p>
+<p><img src="../assets/images/07-skeleton-theme-structure.png" alt="Directory listing of the Skeleton theme’s folders and files" /> <em>layout, sections, snippets, templates, assets, config — the actual anatomy of a Shopify theme.</em></p>
+<p>Each folder has a specific job:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Folder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>layout/</code></td>
+<td>The outer HTML shell every page renders inside</td>
+</tr>
+<tr class="even">
+<td><code>sections/</code></td>
+<td>Reusable, configurable blocks — header, footer, hero, etc.</td>
+</tr>
+<tr class="odd">
+<td><code>snippets/</code></td>
+<td>Small reusable pieces of code, included into sections</td>
+</tr>
+<tr class="even">
+<td><code>templates/</code></td>
+<td>Defines which sections appear on which page type</td>
+</tr>
+<tr class="odd">
+<td><code>assets/</code></td>
+<td>CSS, JS, images</td>
+</tr>
+<tr class="even">
+<td><code>config/</code></td>
+<td>Theme-wide settings definitions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="running-it-live">Running it live</h3>
+<p>The moment that actually felt real was this:</p>
+<pre><code>shopify theme dev --store nilamrakholiyastore.myshopify.com</code></pre>
+<p><img src="../assets/images/08-theme-dev-success.png" alt="Terminal showing a successful theme dev connection with preview links" /> <em>Success — a local dev server, live-linked to my real store.</em></p>
+<p>Along the way I got briefly sidetracked looking at the store-switcher dropdown in the Shopify admin, thinking it was part of this flow:</p>
+<p><img src="../assets/images/09-store-switcher.png" alt="Shopify admin store switcher dropdown showing multiple dev stores" /> <em>Not related to the CLI at all — just the normal admin UI for switching between Partner-account stores.</em></p>
+<p>Back in the terminal, after entering the storefront password (a separate gate dev stores have, unrelated to any of this setup), the preview loaded:</p>
+<p><img src="../assets/images/10-hello-world-live-preview.png" alt="Browser showing the Skeleton theme’s “Hello, World!” placeholder homepage" /> <em>The Skeleton theme’s default homepage — plain, but genuinely mine, running from local code against real store data.</em></p>
+<p>End of day one: CLI installed, authenticated, a blank theme scaffolded, and a live local preview working.</p>
+<hr />
+<h2 id="day-2-understanding-what-actually-happened">Day 2 — Understanding what actually happened</h2>
+<p>Day one was commands and outputs. Day two, I wanted to understand the <em>mechanics</em> — not just that things worked, but why.</p>
+<h3 id="the-mental-model-that-made-everything-click">The mental model that made everything click</h3>
+<blockquote>
+<p>A Shopify <strong>store</strong> is a live database — products, pages, settings. A <strong>theme</strong> is just code that decides how that data gets displayed. They’re stored and managed completely separately.</p>
+</blockquote>
+<p>Everything from day one was really about connecting a second, blank theme to my <em>existing</em> store’s real data — without ever touching the theme actually live for customers.</p>
+<h3 id="revisiting-a-small-confusion">Revisiting a small confusion</h3>
+<p>I hit a moment where my theme didn’t show up where I expected it to:</p>
+<p><img src="../assets/images/11-theme-not-in-library.png" alt="Shopify admin Discover Themes page with no custom theme visible" /> <em>My custom theme wasn’t listed here — briefly confusing.</em></p>
+<p>The explanation, once I understood the states a theme can be in (more on this below): <code>shopify theme dev</code> creates a <strong>temporary development theme</strong> that only exists in the Theme library <em>while that terminal session is running</em>. Close the terminal, and it disappears from view — nothing is lost, it’s simply not the kind of theme meant to persist.</p>
+<p>I also hit a small terminal error that turned out to be nothing:</p>
+<p><img src="../assets/images/12-already-in-folder-error.png" alt="Terminal showing a “path not specified” error from a redundant cd command" /> <em>I tried to <code>cd</code> into a folder I was already inside of. An easy mistake, and a good reminder to check the prompt path before typing the next command.</em></p>
+<h3 id="the-three-states-a-theme-can-be-in">The three states a theme can be in</h3>
+<p>This is the piece that actually resolved my confusion from the screenshot above:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>State</th>
+<th>Persists after closing terminal?</th>
+<th>Visible in Theme library?</th>
+<th>Customers see it?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Development</strong> (<code>theme dev</code>)</td>
+<td>No</td>
+<td>No</td>
+<td>Never</td>
+</tr>
+<tr class="even">
+<td><strong>Unpublished / draft</strong> (<code>theme push --unpublished</code>)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Never</td>
+</tr>
+<tr class="odd">
+<td><strong>Live</strong> (published)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>Running <code>shopify theme push --unpublished</code> created a <em>permanent</em> draft theme — sitting in my Theme library regardless of whether a terminal is open, fully previewable through Shopify’s visual editor, but still completely invisible to real customers until I explicitly publish it.</p>
+<h3 id="what-the-dev-server-actually-is">What the dev server actually is</h3>
+<p>The part that had genuinely felt like magic on day one: how a “local” preview could show real store data.</p>
+<p>The answer is that <code>shopify theme dev</code> isn’t a copy of the store — it’s a <strong>local proxy server</strong>. A proxy sits between your request and the real destination, able to modify what passes through. The actual request path looks like this:</p>
+<pre><code>browser → local proxy → Shopify&#39;s real servers → back through proxy (local code swapped in) → browser</code></pre>
+<p>My browser asks for a page. The proxy fetches real data — products, cart state, settings — from Shopify’s actual servers, then swaps in <em>my local files</em> before the response reaches me. Real data, local code, live — no upload step, no delay. Editing a file and refreshing shows the change instantly because the proxy simply re-reads the file on each request.</p>
+<h3 id="code-editor-vs.-visual-editor">Code editor vs. visual editor</h3>
+<p>The last piece worth separating clearly:</p>
+<ul>
+<li><strong>VS Code</strong> defines <em>what’s possible</em>. Writing a section’s Liquid file, including its <code>{% schema %}</code> block, declares what settings exist and what content it can hold. This is code.</li>
+<li><strong>Shopify’s visual editor</strong> configures <em>those possibilities</em>. It lets me arrange sections and set values — no code touched, just data, stored separately as JSON.</li>
+</ul>
+<p>This distinction matters directly for what I’m building next: a mega menu needs code (to render nested menu items as a dropdown panel) <em>and</em> data (the actual nested menu structure, built inside Online Store → Navigation in the admin). Neither piece alone is enough.</p>
+<hr />
+<h2 id="where-this-leaves-me">Where this leaves me</h2>
+<p>Two days in, I have:</p>
+<ul>
+<li>A working local development environment, properly authenticated</li>
+<li>A theme scaffolded entirely from scratch — no template, no page builder</li>
+<li>A real understanding of the mechanics: proxy servers, theme states, and the code/data split between VS Code and the visual editor</li>
+</ul>
+<p>Next up: building the header and a mega menu, entirely by hand, using everything above.</p>
+<p>If you’re coming back to development after a break of your own, the biggest thing that helped wasn’t the commands — it was slowing down enough on day two to ask <em>why</em> each one worked, instead of just moving on once it did.</p>
+</article>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Let's talk.</h2>
+    <p>Looking for an entry-level developer or IT role in Brisbane. Always happy to connect, share what I'm building, or just talk shop.</p>
+    <div class="footer-links">
+      <a href="mailto:nilamrj07@gmail.com">nilamrj07@gmail.com</a>
+      <a href="https://www.linkedin.com/in/nilamrakholiya" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/YOUR-GITHUB-USERNAME" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="footer-bottom">© 2026 Nilam Rakholiya. Built from scratch, deployed on GitHub Pages.</div>
+  </div>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
