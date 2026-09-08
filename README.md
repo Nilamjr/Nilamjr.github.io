@@ -1,6 +1,6 @@
-# Nilam Rakholiya — Portfolio Site
+# Nilam Rakholiya - Portfolio Site
 
-A plain HTML/CSS/JS portfolio site — no build step, no framework, so it
+A plain HTML/CSS/JS portfolio site - no build step, no framework, so it
 deploys straight to GitHub Pages for free.
 
 ## Structure
@@ -17,7 +17,7 @@ assets/
   resume/nilam-rakholiya-resume.pdf     → downloadable résumé
 ```
 
-## Before you deploy — three things to update
+## Before you deploy - three things to update
 
 1. **GitHub links.** Search every HTML file for `Nilamjr` and
    replace it with your actual GitHub username (and real repo names once
@@ -27,7 +27,7 @@ assets/
    replace with your username.
 
 2. **Headline.** The hero currently uses "Front-End Developer · Shopify &
-   E-Commerce Specialist" — swap it in `index.html` for whichever headline
+   E-Commerce Specialist" - swap it in `index.html` for whichever headline
    you land on.
 
 3. **Project cards.** Update the status (`Live` / `In progress`) and
@@ -50,7 +50,7 @@ assets/
 3. In the repo on GitHub: **Settings → Pages** → under "Build and
    deployment," Source should already show "Deploy from a branch," branch
    `main`, folder `/ (root)`. If not, set it and save.
-4. Wait 1–2 minutes, then visit `https://Nilamjr.github.io` —
+4. Wait 1–2 minutes, then visit `https://Nilamjr.github.io`- 
    it's live.
 
 Every time you `git push` after this, the live site updates automatically
