@@ -54,7 +54,7 @@ assets/
    it's live.
 
 Every time you `git push` after this, the live site updates automatically
-within a minute or two — no redeploy step needed.
+within a minute or two - no redeploy step needed.
 
 ## Adding a new blog post later (Day 3 onward)
 
