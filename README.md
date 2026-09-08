@@ -19,11 +19,11 @@ assets/
 
 ## Before you deploy — three things to update
 
-1. **GitHub links.** Search every HTML file for `YOUR-GITHUB-USERNAME` and
+1. **GitHub links.** Search every HTML file for `Nilamjr` and
    replace it with your actual GitHub username (and real repo names once
-   those repos exist — the theme repo, the product automation repo, etc).
+   those repos exist - the theme repo, the product automation repo, etc).
    Easiest way: open the project folder in VS Code, use **Find & Replace
-   in Files** (Ctrl+Shift+H / Cmd+Shift+H), search `YOUR-GITHUB-USERNAME`,
+   in Files** (Ctrl+Shift+H / Cmd+Shift+H), search `Nilamjr`,
    replace with your username.
 
 2. **Headline.** The hero currently uses "Front-End Developer · Shopify &
@@ -36,7 +36,7 @@ assets/
 ## Deploying to GitHub Pages (free, no domain needed)
 
 1. Create a new GitHub repository named **exactly**
-   `YOUR-GITHUB-USERNAME.github.io` (this exact naming is what makes
+   `Nilamjr.github.io` (this exact naming is what makes
    GitHub serve it automatically at the root URL, no extra config).
 2. Push this whole folder's contents into that repo:
    ```
@@ -44,13 +44,13 @@ assets/
    git add .
    git commit -m "Initial portfolio site"
    git branch -M main
-   git remote add origin https://github.com/YOUR-GITHUB-USERNAME/YOUR-GITHUB-USERNAME.github.io.git
+   git remote add origin https://github.com/Nilamjr/Nilamjr.github.io.git
    git push -u origin main
    ```
 3. In the repo on GitHub: **Settings → Pages** → under "Build and
    deployment," Source should already show "Deploy from a branch," branch
    `main`, folder `/ (root)`. If not, set it and save.
-4. Wait 1–2 minutes, then visit `https://YOUR-GITHUB-USERNAME.github.io` —
+4. Wait 1–2 minutes, then visit `https://Nilamjr.github.io` —
    it's live.
 
 Every time you `git push` after this, the live site updates automatically
